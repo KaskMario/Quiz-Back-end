@@ -21,40 +21,26 @@ public class QuizController {
     QuizService quizService;
 
 
-
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> createQuiz(@RequestBody Map<String, Object> payload) {
-        String category = (String) payload.get("category");
-        int numberOfQuestions = (int) payload.get("numberOfQuestions");
-        String title = (String) payload.get("title");
-
-        return quizService.createQuiz(category, numberOfQuestions, title);
-    }
-
-    /*@PostMapping("/create")
-    public ResponseEntity<String> createQuiz(
+    @GetMapping("/get")
+    public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(
             @RequestParam String category,
-            @RequestParam int numberOfQuestions,
-            @RequestParam String title){
-         return quizService.createQuiz(category,numberOfQuestions,title);
+            @RequestParam int numberOfQuestions) {
 
-    }*/
-    @GetMapping("/get/{id}")
-    public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(@PathVariable Integer id){
-        return quizService.getQuizQuestions(id);
+        List<QuestionWrapper> questions = quizService.getQuizQuestions(category, numberOfQuestions);
 
+        if (questions.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(questions, HttpStatus.OK);
     }
-
-    @PostMapping("/submit/{id}")
-    public ResponseEntity<Integer> submitQuiz(@PathVariable Integer id, @RequestBody List<QuizResponse> response){
-        return quizService.calculateResult(id,response);
-    }
-
-    @GetMapping("/category")
-    public ResponseEntity<List<String>> getCategories() {
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getAllCategories() {
         List<String> categories = quizService.getAllCategories();
+        if (categories.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
-
 
 }
