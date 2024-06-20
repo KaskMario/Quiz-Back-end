@@ -20,13 +20,17 @@ public class QuizService {
         List<QuestionWrapper> questionsForUser = new ArrayList<>();
 
         for (Question question : questionsFromDb) {
+            List<String> options = new ArrayList<>();
+            options.add(question.getOption1());
+            options.add(question.getOption2());
+            options.add(question.getOption3());
+            options.add(question.getOption4());
+            Collections.shuffle(options);
+
             QuestionWrapper questionWrapper = new QuestionWrapper(
                     question.getId(),
                     question.getQuestionTitle(),
-                    question.getOption1(),
-                    question.getOption2(),
-                    question.getOption3(),
-                    question.getOption4()
+                    options
             );
             questionsForUser.add(questionWrapper);
         }
@@ -36,6 +40,10 @@ public class QuizService {
 
     public List<String> getAllCategories() {
         return questionRepo.findAllCategories();
+    }
+
+    public String getRightAnswer(Integer questionId) {
+        return questionRepo.findRightAnswerByQuestionId(questionId);
     }
 
 }
