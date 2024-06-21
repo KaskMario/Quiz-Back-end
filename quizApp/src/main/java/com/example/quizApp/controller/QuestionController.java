@@ -18,24 +18,29 @@ public class QuestionController {
 
     @GetMapping("/allQuestions")
     public ResponseEntity<List<Question>> getAllQuestions(){
-        return questionService.getAllQuestions();
+        List<Question> questions =  questionService.getAllQuestions();
+        return new ResponseEntity<>(questions, HttpStatus.OK);
     }
     @GetMapping("/category/{category}")
-    public List<Question> getQuestionByCategory(@PathVariable String category){
-       return questionService.getQuestionsByCategory(category);
+    public ResponseEntity <List<Question>> getQuestionByCategory(@PathVariable String category){
+        List<Question> questions =  questionService.getQuestionsByCategory(category);
+        return new ResponseEntity<>(questions, HttpStatus.OK);
     }
     @PostMapping("/add")
-    public Question addQuestion(@RequestBody Question question){
-        return questionService.addQuestion(question);
+    public ResponseEntity<Question> addQuestion(@RequestBody Question question){
+       Question newQuestion = questionService.addQuestion(question);
+       return new ResponseEntity<>(newQuestion,HttpStatus.CREATED);
 
     }
     @DeleteMapping("/delete/{id}")
-    public void deleteQuestion(@PathVariable("id") Question question){
+    public ResponseEntity<?> deleteQuestion(@PathVariable("id") Question question){
        questionService.deleteQuestion(question);
+       return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping("/update")
-    public Question updateQuestion(@RequestBody Question question){
-        return questionService.updateQuestion(question);
+    public ResponseEntity <Question> updateQuestion(@RequestBody Question question){
+       Question updatedQuestion = questionService.updateQuestion(question);
+        return new ResponseEntity<>(updatedQuestion, HttpStatus.OK);
     }
 
 

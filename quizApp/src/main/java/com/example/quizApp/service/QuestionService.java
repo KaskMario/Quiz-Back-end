@@ -23,13 +23,8 @@ public class QuestionService {
         this.questionRepo=questionRepo;
     }
 
-    public ResponseEntity<List<Question>> getAllQuestions() {
-        try {
-            return new ResponseEntity<>(questionRepo.findAll(), HttpStatus.OK);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+    public List<Question> getAllQuestions(){
+        return questionRepo.findAll();
     }
 
     public List<Question> getQuestionsByCategory(String category) {
