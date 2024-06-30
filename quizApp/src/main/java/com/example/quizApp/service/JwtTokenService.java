@@ -1,5 +1,6 @@
 package com.example.quizApp.service;
 
+import com.example.quizApp.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,9 +24,10 @@ public class JwtTokenService {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String generateToken(int userId, String role) {
+
+    public String generateToken(int userId, Set<Role> roles) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
+        claims.put("roles", roles);
 
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -35,23 +37,20 @@ public class JwtTokenService {
                 .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                 .compact();
 
-       // System.out.println("Generated Token: " + token);
         return token;
     }
-
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secret.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
         int userId = Integer.parseInt(claims.getSubject());
-        String role = claims.get("role", String.class);
-
-      //  System.out.println("Authenticated user ID: " + userId);
-       // System.out.println("User role from token: " + role);
+        List<Map<String, String>> rolesMap = (List<Map<String, String>>) claims.get("roles");
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        for (Map<String, String> role : rolesMap) {
+            authorities.add(new SimpleGrantedAuthority(role.get("role")));
+        }
 
         return new UsernamePasswordAuthenticationToken(userId, null, authorities);
     }

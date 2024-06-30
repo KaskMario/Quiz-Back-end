@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/question")
@@ -32,17 +35,24 @@ public class QuestionController {
        return new ResponseEntity<>(newQuestion,HttpStatus.CREATED);
 
     }
+
+
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteQuestion(@PathVariable("id") Question question){
-       questionService.deleteQuestion(question);
-       return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> deleteQuestion(@PathVariable Integer id) {
+        boolean isDeleted = questionService.deleteQuestionById(id);
+        Map<String, String> response = new HashMap<>();
+        if (isDeleted) {
+            response.put("message", "Question deleted successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            response.put("message", "Question not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
     @PutMapping("/update")
     public ResponseEntity <Question> updateQuestion(@RequestBody Question question){
        Question updatedQuestion = questionService.updateQuestion(question);
         return new ResponseEntity<>(updatedQuestion, HttpStatus.OK);
     }
-
-
 
 }

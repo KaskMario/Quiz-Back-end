@@ -25,18 +25,10 @@ public class LoginService {
 
 
     public Optional<Integer> login(User user) {
-        System.out.println("Login attempt for user: " + user.getUsername());
-        Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
-
-        if (existingUser.isPresent()) {
-            System.out.println("User found: " + existingUser.get().getUsername());
-            boolean passwordMatch = passwordEncoder.matches(user.getPassword(), existingUser.get().getPassword());
-            System.out.println("Password match: " + passwordMatch);
-            if (passwordMatch) {
-                return Optional.of(existingUser.get().getId());
-            }
-        } else {
-            System.out.println("User not found");
+        Optional<User> foundUser = userRepository.findByUsername(user.getUsername());
+        if (foundUser.isPresent() && passwordEncoder.matches(user.getPassword(), foundUser.get().getPassword())) {
+            user.setRoles(foundUser.get().getRoles()); // Ensure roles are set
+            return Optional.of(foundUser.get().getId());
         }
         return Optional.empty();
     }

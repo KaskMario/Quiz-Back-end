@@ -1,6 +1,5 @@
 package com.example.quizApp.security;
 
-import com.example.quizApp.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,12 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
-    private final CustomUserDetailsService customUserDetailsService;
 
 
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter, CustomUserDetailsService customUserDetailsService) {
+
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter){//, CustomUserDetailsService customUserDetailsService) {
         this.jwtRequestFilter = jwtRequestFilter;
-        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
@@ -33,6 +31,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                //.requestMatchers("/question/edit/**").hasRole("ADMIN")
+                               // .requestMatchers("/question/delete/**").authenticated()
                                 .requestMatchers("/quiz/categories", "/auth/login", "/auth/register", "/auth/register-admin").permitAll()
                                 .anyRequest().authenticated()
                 )

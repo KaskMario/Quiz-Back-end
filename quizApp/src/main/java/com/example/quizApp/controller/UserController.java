@@ -1,3 +1,4 @@
+/*
 package com.example.quizApp.controller;
 
 import com.example.quizApp.model.User;
@@ -47,3 +48,4 @@ public class UserController {
 
 
 }
+*/
