@@ -32,11 +32,11 @@ public class UserService implements UserDetailsService {
 
     public User saveNewUser(String username, String password){
         User newUser = new User();
-        if(userRepo.findByUsername(username).isEmpty()){
-            newUser.setUsername(username);
+        if(userRepo.findByUserName(username).isEmpty()){
+            newUser.setUserName(username);
             newUser.setPassword(passwordEncoder.encode(password));
         }
-        Role userRole = roleRepo.findByRole(userRole)
+        Role userRole = roleRepo.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("User Role not set."));
         newUser.getRoles().add(userRole);
 
@@ -60,15 +60,16 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByUsername(username)
+        User user = userRepo.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole()))
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), authorities);
     }
 }
 
 */
+

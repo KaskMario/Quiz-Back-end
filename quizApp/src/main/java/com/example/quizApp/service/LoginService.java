@@ -27,25 +27,25 @@ public class LoginService {
     public Optional<Integer> login(User user) {
         Optional<User> foundUser = userRepository.findByUsername(user.getUsername());
         if (foundUser.isPresent() && passwordEncoder.matches(user.getPassword(), foundUser.get().getPassword())) {
-            user.setRoles(foundUser.get().getRoles()); // Ensure roles are set
+            user.setRole(foundUser.get().getRole());
             return Optional.of(foundUser.get().getId());
         }
         return Optional.empty();
     }
 
-    public Optional<User> register(User user, RoleName roleName) {
-      //  System.out.println("Checking if user exists: " + user.getUsername());
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-           // System.out.println("User already exists: " + user.getUsername());
-            return Optional.empty(); // User already exists
-        }
+   public Optional<User> register(User user, RoleName roleName) {
+       if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+           return Optional.empty();
+       }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role role = roleRepository.findByRole(roleName)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
-        user.getRoles().add(role);
-        return Optional.of(userRepository.save(user));
-    }
+       user.setPassword(passwordEncoder.encode(user.getPassword()));
+       Role role = roleRepository.findByRole(roleName)
+               .orElseThrow(() -> new RuntimeException("Role not found"));
+       user.setRole(role);
+
+       return Optional.of(userRepository.save(user));
+   }
+
 
     public User getUserById(Integer id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));

@@ -32,13 +32,8 @@ public class QuestionService {
         return questionRepo.save(question);
     }
 
-    public boolean deleteQuestionById(Integer id) {
-        if (questionRepo.existsById(id)) {
-            questionRepo.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
+    public void deleteQuestionById(Integer id) {
+               questionRepo.deleteById(id);
     }
     public Question updateQuestion(Question question) {
         return questionRepo.save(question);

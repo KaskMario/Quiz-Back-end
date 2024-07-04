@@ -22,32 +22,28 @@ public class AuthController {
     private final JwtTokenService jwtTokenService;
 
     private final LoginService loginService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private static final String ADMIN_KEY = "ventilaator";
 
     public AuthController(JwtTokenService jwtTokenService, LoginService loginService) {
         this.jwtTokenService = jwtTokenService;
         this.loginService = loginService;
     }
-
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
-        logger.info("Login attempt for user: {}", user.getUsername());
         return loginService.login(user)
                 .map(userId -> {
-                    Set<Role> roles = user.getRoles();
-                    if (roles.isEmpty()) {
-                        logger.warn("User {} has no roles assigned", user.getUsername());
+                    Role role = user.getRole();
+                    if (role == null) {
+                        System.out.println("User " + user.getUsername() + " has no roles assigned");
                     } else {
-                        logger.info("User {} roles: {}", user.getUsername(), roles);
+                        System.out.println("User " + user.getUsername() + " roles: " + role);
                     }
-                    String token = jwtTokenService.generateToken(userId, roles);
+                    String token = jwtTokenService.generateToken(userId, role.getRole().name());
 
-                    // Log if the user has the admin role
-                    roles.stream()
-                            .filter(role -> role.getRole().equals(RoleName.ROLE_ADMIN))
-                            .findFirst()
-                            .ifPresent(role -> logger.info("Admin user logged in: {}", user.getUsername()));
+                    if (role.getRole().equals(RoleName.ROLE_ADMIN)) {
+                        System.out.println("Admin user logged in: " + user.getUsername());
+                    }
+
                     return new ResponseEntity<>(token, HttpStatus.OK);
                 }).orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }
