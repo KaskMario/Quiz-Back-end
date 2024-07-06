@@ -15,8 +15,8 @@ public class QuizService {
     @Autowired
     private QuestionRepo questionRepo;
 
-    public List<QuestionWrapper> getQuizQuestions(String category, int numberOfQuestions) {
-        List<Question> questionsFromDb = questionRepo.findRandomQuestionsByCategory(category, numberOfQuestions);
+    public List<QuestionWrapper> getQuizQuestions(String category,String difficulty, int numberOfQuestions) {
+        List<Question> questionsFromDb = questionRepo.findQuestionsByCategoryAndDifficulty(category,difficulty,numberOfQuestions);
         List<QuestionWrapper> questionsForUser = new ArrayList<>();
 
         for (Question question : questionsFromDb) {
@@ -46,4 +46,10 @@ public class QuizService {
         return questionRepo.findRightAnswerByQuestionId(questionId);
     }
 
+    public List<String> getAllDifficultyLevels() {
+        return questionRepo.findAllDifficultyLevels();
+        /*List<String> difficultyLevels = questionRepo.findAllDifficultyLevels();
+        System.out.println("Difficulty Levels: " + difficultyLevels);
+        return difficultyLevels;*/
+    }
 }

@@ -31,9 +31,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                //.requestMatchers("/question/edit/**").hasRole("ADMIN")
-                               // .requestMatchers("/question/delete/**").authenticated()
-                                .requestMatchers("/quiz/categories", "/auth/login", "/auth/register", "/auth/register-admin").permitAll()
+                                .requestMatchers("/auth/login", "/auth/register", "/auth/register-admin").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->

@@ -53,8 +53,10 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
         return loginService.register(user, RoleName.ROLE_USER)
                 .map(u -> {
+                    String token = jwtTokenService.generateToken(u.getId(), u.getRole().getRole().name());
                     Map<String, String> response = new HashMap<>();
                     response.put("message", "User registered successfully");
+                    response.put("token", token);
                     return new ResponseEntity<>(response, HttpStatus.CREATED);
                 })
                 .orElseGet(() -> {
@@ -73,8 +75,10 @@ public class AuthController {
         }
         return loginService.register(user, RoleName.ROLE_ADMIN)
                 .map(u -> {
+                    String token = jwtTokenService.generateToken(u.getId(), u.getRole().getRole().name());
                     Map<String, String> response = new HashMap<>();
                     response.put("message", "Admin registered successfully");
+                    response.put("token", token);
                     return new ResponseEntity<>(response, HttpStatus.CREATED);
                 })
                 .orElseGet(() -> {
