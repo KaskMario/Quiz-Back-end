@@ -1,6 +1,5 @@
 package com.example.quizApp.security;
 
-import com.example.quizApp.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,29 +18,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
-    private final CustomUserDetailsService customUserDetailsService;
 
 
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter, CustomUserDetailsService customUserDetailsService) {
+
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter){
         this.jwtRequestFilter = jwtRequestFilter;
-        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+      /*  httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/quiz/categories", "/auth/login", "/auth/register", "/auth/register-admin").permitAll()
+                                .requestMatchers("/auth/login", "/auth/register", "/auth/register-admin").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
 
-        return http.build();
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/login", "/auth/register", "/auth/register-admin").permitAll()
+                .anyRequest().authenticated());
+
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        return httpSecurity.build();
     }
 
     @Bean

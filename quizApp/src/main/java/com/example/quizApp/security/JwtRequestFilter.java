@@ -25,26 +25,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String token = request.getHeader("Authorization");
-        System.out.println("Authorization header: " + token);  // Logging the authorization header
 
-        if (token != null && token.startsWith("Bearer ")) {
-            String tokenWithoutBearer = token.substring(7);
-            System.out.println("Token without Bearer prefix: " + tokenWithoutBearer);
+        try {
 
-            try {
-                if (tokenWithoutBearer.chars().filter(ch -> ch == '.').count() != 2) {
-                    throw new IllegalArgumentException("JWT strings must contain exactly 2 period characters. Found: " + tokenWithoutBearer.chars().filter(ch -> ch == '.').count());
-                }
+            final String token = request.getHeader("Authorization");
+            System.out.println("Authorization header: " + token);
+
+            if (token != null && token.startsWith("Bearer ")) {
+                String tokenWithoutBearer = token.substring(7);
                 Authentication authentication = jwtTokenService.getAuthentication(tokenWithoutBearer);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 System.out.println("Authenticated user with token");
-            } catch (Exception e) {
-                System.err.println("Authentication failed: " + e.getMessage());
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                return;
             }
+        } catch(Exception e) {
+            System.err.println("Authentication failed: " + e.getMessage());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            return;
         }
+
 
         filterChain.doFilter(request, response);
     }
