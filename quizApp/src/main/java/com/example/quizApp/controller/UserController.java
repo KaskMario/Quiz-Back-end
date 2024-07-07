@@ -1,7 +1,7 @@
 package com.example.quizApp.controller;
 
 import com.example.quizApp.model.Role;
-import com.example.quizApp.model.Usergit commit -m "Your commit message";
+import com.example.quizApp.model.User;
 import com.example.quizApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
