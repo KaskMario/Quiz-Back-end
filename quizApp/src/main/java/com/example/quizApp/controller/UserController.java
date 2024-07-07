@@ -1,7 +1,7 @@
-/*
 package com.example.quizApp.controller;
 
-import com.example.quizApp.model.User;
+import com.example.quizApp.model.Role;
+import com.example.quizApp.model.Usergit commit -m "Your commit message";
 import com.example.quizApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -17,35 +18,38 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-@GetMapping("/all")
+    @GetMapping("/all")
     public ResponseEntity<List<User>>getAllUsers(){
-    List<User> users = userService.getAllUsers();
-    return new ResponseEntity<>(users, HttpStatus.OK);
-}
+        List<User> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>>getRoles(){
+        List<Role> roles = userService.getRoles();
+        return new ResponseEntity<>(roles, HttpStatus.OK);
+    }
 
 
-@PostMapping("/save")
+    @PostMapping("/save")
     public ResponseEntity<User> saveNewUser(@RequestParam String username,@RequestParam String password){
-    User newUser = userService.saveNewUser(username, password);
-    return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        User newUser = userService.saveNewUser(username, password);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
 
-}
-@DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteUser(@RequestBody User user){
-    userService.deleteUser(user);
-    return new ResponseEntity<>(HttpStatus.OK);
-}
-@PutMapping("/update")
+    }
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser(@RequestParam int userId){
+        userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PutMapping("/update")
     public ResponseEntity<User> updateUser(@RequestBody User user){
-    User updatedUser = userService.updateUser(user);
-    return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
-}
-
-
+        User updatedUser = userService.updateUser(user);
+        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+    }
 
 
 
 
 
 }
-*/

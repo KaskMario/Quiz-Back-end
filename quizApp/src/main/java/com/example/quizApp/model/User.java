@@ -3,10 +3,9 @@ package com.example.quizApp.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Data
@@ -23,10 +22,25 @@ public class User {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
+    @Getter
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false)
+    @Column(name = "first_name", nullable = false)
+    private String first_name;
+
+    @Column(name = "last_name", nullable = false)
+    private String last_name;
+
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
+
+
+
+
 }
