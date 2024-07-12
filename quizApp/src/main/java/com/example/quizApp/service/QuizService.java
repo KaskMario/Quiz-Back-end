@@ -1,8 +1,10 @@
 package com.example.quizApp.service;
 
 import com.example.quizApp.dao.QuestionRepo;
+import com.example.quizApp.dao.QuizSaveRepo;
 import com.example.quizApp.model.Question;
 import com.example.quizApp.model.QuestionWrapper;
+import com.example.quizApp.model.SavedQuiz;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class QuizService {
 
     @Autowired
     private QuestionRepo questionRepo;
+
+    @Autowired
+    private QuizSaveRepo quizSaveRepo;
 
     public List<QuestionWrapper> getQuizQuestions(String category,String difficulty, int numberOfQuestions) {
         List<Question> questionsFromDb = questionRepo.findQuestionsByCategoryAndDifficulty(category,difficulty,numberOfQuestions);
@@ -52,4 +57,9 @@ public class QuizService {
         System.out.println("Difficulty Levels: " + difficultyLevels);
         return difficultyLevels;*/
     }
+
+    public SavedQuiz saveQuiz(SavedQuiz savedQuiz) {
+        return quizSaveRepo.save(savedQuiz);}
+
+
 }

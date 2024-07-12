@@ -1,12 +1,13 @@
 package com.example.quizApp.controller;
 
+import com.example.quizApp.model.Question;
 import com.example.quizApp.model.QuestionWrapper;
+import com.example.quizApp.model.SavedQuiz;
 import com.example.quizApp.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,5 +62,13 @@ public class QuizController {
         response.put("rightAnswer", rightAnswer);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/save")
+    public ResponseEntity <SavedQuiz> saveQuiz(@RequestBody SavedQuiz savedQuiz){
+        SavedQuiz newSavedQuiz = quizService.saveQuiz(savedQuiz);
+        return new ResponseEntity<>(newSavedQuiz, HttpStatus.OK);
+    }
+
+
 
 }

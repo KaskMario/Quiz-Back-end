@@ -28,10 +28,6 @@ public class QuizResult {
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
 
-
-
-
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
