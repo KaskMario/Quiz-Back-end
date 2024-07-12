@@ -21,13 +21,15 @@ public class SecurityConfig {
 
 
 
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter){//, CustomUserDetailsService customUserDetailsService) {
+
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter){
+
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+      /*  httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
@@ -37,9 +39,15 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
 
-        return http.build();
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/login", "/auth/register", "/auth/register-admin").permitAll()
+                .anyRequest().authenticated());
+
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        return httpSecurity.build();
     }
 
     @Bean
