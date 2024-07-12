@@ -32,11 +32,11 @@ public class QuestionService {
         return questionRepo.save(question);
     }
 
-    public void deleteQuestion(Question question) {
-       questionRepo.delete(question);
+    public void deleteQuestionById(Integer id) {
+               questionRepo.deleteById(id);
     }
-
     public Question updateQuestion(Question question) {
         return questionRepo.save(question);
     }
+
 }

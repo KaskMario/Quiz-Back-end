@@ -17,11 +17,12 @@ import java.util.function.Function;
 public class JwtTokenService {
 
 
-    @Value("${jwt.token.validity}") // Injecting value from application.properties
+    @Value("${jwt.token.validity}")
     private long JWT_TOKEN_VALIDITY;
 
     @Value("${jwt.secret}")
     private String secret;
+
 
     public String generateToken(int userId, String role) {
         Map<String, Object> claims = new HashMap<>();
@@ -35,7 +36,6 @@ public class JwtTokenService {
                 .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                 .compact();
 
-       // System.out.println("Generated Token: " + token);
         return token;
     }
 
@@ -47,14 +47,12 @@ public class JwtTokenService {
         int userId = Integer.parseInt(claims.getSubject());
         String role = claims.get("role", String.class);
 
-      //  System.out.println("Authenticated user ID: " + userId);
-       // System.out.println("User role from token: " + role);
-
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
 
         return new UsernamePasswordAuthenticationToken(userId, null, authorities);
     }
+
 
     public int getUserIdFromToken(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("Authorization");

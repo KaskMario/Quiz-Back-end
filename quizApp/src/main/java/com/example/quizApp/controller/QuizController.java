@@ -19,12 +19,14 @@ public class QuizController {
     QuizService quizService;
 
 
+
     @GetMapping("/get")
     public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(
             @RequestParam String category,
+            @RequestParam String difficulty,
             @RequestParam int numberOfQuestions) {
 
-        List<QuestionWrapper> questions = quizService.getQuizQuestions(category, numberOfQuestions);
+        List<QuestionWrapper> questions = quizService.getQuizQuestions(category, difficulty, numberOfQuestions);
 
         if (questions.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -39,6 +41,14 @@ public class QuizController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+    @GetMapping("/difficulty-levels")
+    public ResponseEntity<List<String>> getAllDifficultyLevels() {
+        List<String> difficultyLevels = quizService.getAllDifficultyLevels();
+        if (difficultyLevels.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(difficultyLevels, HttpStatus.OK);
     }
 
     @GetMapping("/answer/{questionId}")
