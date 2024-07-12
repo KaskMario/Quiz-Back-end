@@ -5,21 +5,14 @@ import com.example.quizApp.dao.UserRepo;
 import com.example.quizApp.model.Role;
 import com.example.quizApp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static com.example.quizApp.model.RoleName.ROLE_USER;
 
 @Service
@@ -77,6 +70,11 @@ public class UserService implements UserDetailsService {
 
     public List<Role> getRoles() {
         return roleRepo.findAll();
+    }
+
+    public User getUser(String username){
+        User user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return user;
     }
 
 
