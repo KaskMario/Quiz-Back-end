@@ -30,6 +30,12 @@ public class UserController {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<User>getUserByUsername(@RequestParam String username){
+        User user = userService.getUser(username);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
 
     @PostMapping("/save")
     public ResponseEntity<User> saveNewUser(@RequestParam String username,@RequestParam String password){

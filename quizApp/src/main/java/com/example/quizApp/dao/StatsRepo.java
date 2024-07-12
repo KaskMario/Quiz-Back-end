@@ -48,6 +48,15 @@ public interface StatsRepo extends JpaRepository<QuizResult, Integer> {
     @Query(value = "SELECT DISTINCT q.difficulty FROM `quiz-results` q WHERE q.user_id = :userId;", nativeQuery = true)
     List<String> getUsersDifficulties(@Param("userId") int userId);
 
+    @Query(value = "SELECT SUM(q.length) FROM `quiz-results` q WHERE q.user_id = :userId AND q.category = :category", nativeQuery = true)
+    Integer sumUpQuestionsByCategory(@Param("category") String category, @Param("userId")int userId);
+
+    @Query(value = "SELECT SUM(q.correct_answers) FROM `quiz-results` q WHERE q.user_id = :userId AND q.category = :category", nativeQuery = true)
+    Integer sumUpRightAnswersByCategory(@Param("category") String category, @Param("userId")int userId);
+
+    @Query(value = "SELECT COUNT(*) FROM `quiz-results` q WHERE q.category = :category AND q.user_id = :userId", nativeQuery = true)
+    int countByCategoryAndUserId(@Param("category") String category, @Param("userId") int userId);
+
 
 
 
