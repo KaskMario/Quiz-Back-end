@@ -4,16 +4,13 @@ import com.example.quizApp.dao.QuestionRepo;
 import com.example.quizApp.dao.StatsRepo;
 import com.example.quizApp.dao.UserRepo;
 import com.example.quizApp.model.QuizResult;
+import com.example.quizApp.model.ResultsByCategory;
 import com.example.quizApp.model.Statistics;
 import com.example.quizApp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 @Service
@@ -58,21 +55,21 @@ public class StatsService {
 
     public String getFavouriteCategory (int userId){
         Map<String, Integer> categoryCounts = findCategoryCountsByUserId(userId);
-        String maxCategory = null;
+        StringBuilder maxCategory = null;
         int maxValue = 0;
 
         for (Map.Entry<String, Integer> entry : categoryCounts.entrySet()) {
             if (entry.getValue() > maxValue) {
                 maxValue = entry.getValue();
-                maxCategory = entry.getKey();
+                maxCategory = new StringBuilder(entry.getKey());
             }else if(entry.getValue()== maxValue && maxValue != 0){
-                maxCategory = maxCategory + ", " + entry.getValue();
+                maxCategory.append(", ").append(entry.getValue());
             }
             }
         if (maxCategory == null) {
             System.out.println("Map is empty");
         }
-        return maxCategory;
+        return maxCategory.toString();
     }
 
     public Map<Integer, Integer> findLengthCountsByUserId(int userId) {
@@ -99,7 +96,8 @@ public class StatsService {
                 maxValue = entry.getValue();
                 maxLength = entry.getKey().toString();
             }else if(entry.getValue()== maxValue && maxValue != 0){
-                maxLength = maxLength + " and " + entry.getValue();
+                maxLength = maxLength + " and " + entry.getKey();
+                System.out.println(maxLength);
             }
         }
         if (maxLength == null) {
@@ -109,17 +107,7 @@ public class StatsService {
 
     }
 
-    /*public String getPreferredLength(int userId){
-        int length10 = 10;
-        int length20 = 20;
-        if(statsRepo.countByLength(length10, userId) > statsRepo.countByLength(length20, userId)){
-            return "by 10 questions";
-        }else if(statsRepo.countByLength(length10, userId) == statsRepo.countByLength(length20, userId)){
-            return "by 10 and 20 questions equally";
-        }else{return "by 20 questions";}
-    }*/
-
-    public double getScores(String difficulty, int userId){
+        public double getScores(String difficulty, int userId){
         if(statsRepo.sumUpRightAnswers(difficulty, userId)!=null && statsRepo.sumUpQuestions(difficulty, userId) !=null) {
             double score = (double) statsRepo.sumUpRightAnswers(difficulty, userId) / statsRepo.sumUpQuestions(difficulty, userId) * 100;
             return Math.round(score * 100.0) / 100.0;
@@ -128,16 +116,15 @@ public class StatsService {
         }
     }
 
+    public double getScoresByCategory(String category, int userId){
+        double score = (double) statsRepo.sumUpRightAnswersByCategory(category, userId) / statsRepo.sumUpQuestionsByCategory(category, userId) * 100;
+        return Math.round(score * 100.0) / 100.0;}
+
 
     public List<String> getQuizDifficulties(){
         return questionRepo.findAllDifficultyLevels();
     }
 
-    /*public List<String> getDifficulties(int userId){
-        System.out.println(statsRepo.getUsersDifficulties(userId));
-        return statsRepo.getUsersDifficulties(userId);
-
-    }*/
 
 
 
@@ -169,7 +156,27 @@ public class StatsService {
         }
     }
 
+public List<ResultsByCategory> getResultsByCategory (int userId){
+    List<ResultsByCategory> listOfResultsByCategory = new ArrayList<>();
+    List<String> userCategories = statsRepo.getUsersCategories(userId);
+try{
+    for (int i = 0; i < userCategories.size(); i++) {
+        String category = userCategories.get(i);
+        int quizzesTotal = statsRepo.countByCategoryAndUserId(category, userId);
+        int totalQuestions = statsRepo.sumUpQuestionsByCategory(category, userId);
+        double score = getScoresByCategory(category, userId);
+        ResultsByCategory resultsByCategory = new ResultsByCategory(category, quizzesTotal, totalQuestions, score);
+        listOfResultsByCategory.add(resultsByCategory);
+    }
+    return listOfResultsByCategory;
+}catch (Exception e){ System.err.println("Error: " + e.getMessage());}
+    return listOfResultsByCategory;
 
+}
+
+/*public String getDate(int userId){
+        String date = statsRepo.get
+}*/
 
 
 

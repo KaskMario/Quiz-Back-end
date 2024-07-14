@@ -27,4 +27,6 @@ public interface QuestionRepo extends JpaRepository<Question, Integer> {
     @Query("SELECT DISTINCT q.difficultyLevel from Question q")
     List<String> findAllDifficultyLevels();
 
+
+
 }
