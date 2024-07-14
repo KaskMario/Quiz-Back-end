@@ -3,6 +3,8 @@ package com.example.quizApp.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
@@ -10,7 +12,9 @@ import java.util.Date;
 
 @Data
 @Entity
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "quiz-results")
 public class QuizResult {
 

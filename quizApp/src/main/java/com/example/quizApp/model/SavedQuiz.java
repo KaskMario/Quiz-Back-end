@@ -2,12 +2,14 @@ package com.example.quizApp.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Entity
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "saved_quizzes")
 public class SavedQuiz {
 
@@ -17,7 +19,13 @@ public class SavedQuiz {
     private String questions;
     private String description;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "quiz_result_id")
     private QuizResult quizResult;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
 }

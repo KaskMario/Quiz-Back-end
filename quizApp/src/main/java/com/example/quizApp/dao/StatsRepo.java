@@ -1,11 +1,13 @@
 package com.example.quizApp.dao;
 
 import com.example.quizApp.model.QuizResult;
+import lombok.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+
 
 public interface StatsRepo extends JpaRepository<QuizResult, Integer> {
 
@@ -56,6 +58,11 @@ public interface StatsRepo extends JpaRepository<QuizResult, Integer> {
 
     @Query(value = "SELECT COUNT(*) FROM `quiz-results` q WHERE q.category = :category AND q.user_id = :userId", nativeQuery = true)
     int countByCategoryAndUserId(@Param("category") String category, @Param("userId") int userId);
+
+    @Query(value = "SELECT DATE_FORMAT q.created_at, '%d-%m-%Y %H:%i') FROM `quiz-results` q WHERE q.user_id = :userId", nativeQuery = true)
+    String findMostRecenDate(@Param("userId")int userId);
+
+
 
 
 
