@@ -39,4 +39,8 @@ public class QuestionService {
         return questionRepo.save(question);
     }
 
+    public List<Question> getUnapprovedQuestions() {
+        return questionRepo.findByApprovedFalse();
+    }
+
 }

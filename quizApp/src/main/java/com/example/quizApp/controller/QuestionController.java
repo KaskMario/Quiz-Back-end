@@ -5,6 +5,7 @@ import com.example.quizApp.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -43,6 +44,12 @@ public class QuestionController {
     public ResponseEntity <Question> updateQuestion(@RequestBody Question question){
        Question updatedQuestion = questionService.updateQuestion(question);
         return new ResponseEntity<>(updatedQuestion, HttpStatus.OK);
+    }
+
+    @GetMapping("/unapproved")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<Question> getUnapprovedQuestions() {
+        return questionService.getUnapprovedQuestions();
     }
 
 }

@@ -14,17 +14,20 @@ public interface QuestionRepo extends JpaRepository<Question, Integer> {
     @Query(value = "SELECT * FROM question q WHERE q.category=:category ORDER BY RAND() LIMIT :numberOfQuestions ",nativeQuery = true)
     List<Question> findRandomQuestionsByCategory(String category, int numberOfQuestions);*/
 
-    @Query(value = "SELECT * FROM question q WHERE q.category = :category AND q.difficulty_level = :difficulty ORDER BY RAND() LIMIT :numberOfQuestions", nativeQuery = true)
+    @Query(value = "SELECT * FROM question q WHERE q.category = :category AND q.difficulty_level = :difficulty AND q.approved = true ORDER BY RAND() LIMIT :numberOfQuestions", nativeQuery = true)
     List<Question> findQuestionsByCategoryAndDifficulty(@Param("category") String category, @Param("difficulty") String difficulty, @Param("numberOfQuestions") int numberOfQuestions);
 
-
-    @Query("SELECT DISTINCT q.category FROM Question q")
+    @Query("SELECT DISTINCT q.category FROM Question q WHERE q.approved = true")
     List<String> findAllCategories();
 
-    @Query(value = "SELECT q.right_answer FROM Question q WHERE q.id = :questionId",nativeQuery = true)
+    @Query(value = "SELECT q.right_answer FROM Question q WHERE q.id = :questionId AND q.approved = true", nativeQuery = true)
     String findRightAnswerByQuestionId(@Param("questionId") Integer questionId);
 
-    @Query("SELECT DISTINCT q.difficultyLevel from Question q")
+    @Query("SELECT DISTINCT q.difficultyLevel FROM Question q WHERE q.approved = true")
     List<String> findAllDifficultyLevels();
+
+    @Query("SELECT q FROM Question q WHERE q.approved = false")
+    List<Question> findByApprovedFalse();
+
 
 }
