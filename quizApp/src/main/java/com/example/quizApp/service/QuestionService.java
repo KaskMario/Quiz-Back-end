@@ -21,7 +21,7 @@ public class QuestionService {
     }
 
     public List<Question> getAllQuestions(){
-        return questionRepo.findAll();
+        return questionRepo.findByApproved(true);
     }
 
     public List<Question> getQuestionsByCategory(String category) {
@@ -37,6 +37,17 @@ public class QuestionService {
     }
     public Question updateQuestion(Question question) {
         return questionRepo.save(question);
+    }
+
+    public List<Question> getUnapprovedQuestions() {
+        return questionRepo.findUnapprovedQuestions();
+    }
+
+    public void approveQuestion(Integer id) {
+        Question question = questionRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Question not found"));
+        question.setApproved(true);
+        questionRepo.save(question);
     }
 
 }

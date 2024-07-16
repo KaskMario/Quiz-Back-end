@@ -29,18 +29,8 @@ public class AuthController {
         return loginService.login(user)
                 .map(loggedInUser -> {
                     Role role = loggedInUser.getRole();
-                    if (role == null) {
-                        System.out.println("User " + loggedInUser.getUsername() + " has no roles assigned");
-                    } else {
-                        System.out.println("User " + loggedInUser.getUsername() + " roles: " + role);
-                    }
                     List<String> roles = Collections.singletonList(role.getRole().name());
                     String token = jwtTokenService.generateToken(loggedInUser, roles);
-
-                    if (role.getRole().equals(RoleName.ROLE_ADMIN)) {
-                        System.out.println("Admin user logged in: " + loggedInUser.getUsername());
-                    }
-
                     return new ResponseEntity<>(token, HttpStatus.OK);
                 }).orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }

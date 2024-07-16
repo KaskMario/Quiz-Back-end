@@ -25,8 +25,8 @@ public class JwtTokenService {
 
     public String generateToken(User user, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("username", user.getUsername());
         claims.put("roles", roles);
+        claims.put("username", user.getUsername());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -42,12 +42,11 @@ public class JwtTokenService {
                 .setSigningKey(secret.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
-        int userId = Integer.parseInt(claims.getSubject());
         String username = claims.get("username", String.class);
         List<String> roles = claims.get("roles", List.class);
 
         Collection<GrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
         return new UsernamePasswordAuthenticationToken(username, null, authorities);
