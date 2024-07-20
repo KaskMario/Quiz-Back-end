@@ -2,6 +2,7 @@
 
 This is the backend of QuizApp.
 It includes logic for authentication, security, database and functionality for the end user.
+test
 
 ## Setup
 
