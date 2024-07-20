@@ -1,6 +1,5 @@
 package com.example.quizApp.controller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import com.example.quizApp.model.Role;
 import com.example.quizApp.model.RoleName;
 import com.example.quizApp.model.User;
@@ -10,17 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-
     private final JwtTokenService jwtTokenService;
-
     private final LoginService loginService;
     private static final String ADMIN_KEY = "ventilaator";
 
@@ -28,32 +23,25 @@ public class AuthController {
         this.jwtTokenService = jwtTokenService;
         this.loginService = loginService;
     }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
         return loginService.login(user)
-                .map(userId -> {
-                    Role role = user.getRole();
-                    if (role == null) {
-                        System.out.println("User " + user.getUsername() + " has no roles assigned");
-                    } else {
-                        System.out.println("User " + user.getUsername() + " roles: " + role);
-                    }
-                    String token = jwtTokenService.generateToken(userId, role.getRole().name());
-
-                    if (role.getRole().equals(RoleName.ROLE_ADMIN)) {
-                        System.out.println("Admin user logged in: " + user.getUsername());
-                    }
-
+                .map(loggedInUser -> {
+                    Role role = loggedInUser.getRole();
+                    List<String> roles = Collections.singletonList(role.getRole().name());
+                    String token = jwtTokenService.generateToken(loggedInUser, roles);
                     return new ResponseEntity<>(token, HttpStatus.OK);
                 }).orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }
 
-
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
         return loginService.register(user, RoleName.ROLE_USER)
-                .map(u -> {
-                    String token = jwtTokenService.generateToken(u.getId(), u.getRole().getRole().name());
+                .map(registeredUser -> {
+                    List<String> roles = Collections.singletonList(registeredUser.getRole().getRole().name());
+                    String token = jwtTokenService.generateToken(registeredUser, roles);
+
                     Map<String, String> response = new HashMap<>();
                     response.put("message", "User registered successfully");
                     response.put("token", token);
@@ -74,8 +62,10 @@ public class AuthController {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         return loginService.register(user, RoleName.ROLE_ADMIN)
-                .map(u -> {
-                    String token = jwtTokenService.generateToken(u.getId(), u.getRole().getRole().name());
+                .map(registeredAdmin -> {
+                    List<String> roles = Collections.singletonList(registeredAdmin.getRole().getRole().name());
+                    String token = jwtTokenService.generateToken(registeredAdmin, roles);
+
                     Map<String, String> response = new HashMap<>();
                     response.put("message", "Admin registered successfully");
                     response.put("token", token);
@@ -88,4 +78,3 @@ public class AuthController {
                 });
     }
 }
-

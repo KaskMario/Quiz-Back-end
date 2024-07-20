@@ -1,21 +1,21 @@
 package com.example.quizApp.service;
 
+import com.example.quizApp.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+
 import java.util.*;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenService {
-
 
     @Value("${jwt.token.validity}")
     private long JWT_TOKEN_VALIDITY;
@@ -23,20 +23,18 @@ public class JwtTokenService {
     @Value("${jwt.secret}")
     private String secret;
 
-
-    public String generateToken(int userId, String role) {
+    public String generateToken(User user, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
+        claims.put("roles", roles);
+        claims.put("username", user.getUsername());
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(String.valueOf(userId))
+                .setSubject(String.valueOf(user.getId()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                 .compact();
-
-        return token;
     }
 
     public Authentication getAuthentication(String token) {
@@ -44,37 +42,13 @@ public class JwtTokenService {
                 .setSigningKey(secret.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
-        int userId = Integer.parseInt(claims.getSubject());
-        String role = claims.get("role", String.class);
+        String username = claims.get("username", String.class);
+        List<String> roles = claims.get("roles", List.class);
 
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        Collection<GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
-        return new UsernamePasswordAuthenticationToken(userId, null, authorities);
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
-
-
-    public int getUserIdFromToken(HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader("Authorization");
-     //   System.out.println("Authorization header: " + token);
-
-        if (token != null && token.startsWith("Bearer ")) {
-            String tokenWithoutBearer = token.substring(7);
-            return Integer.parseInt(getClaimFromToken(tokenWithoutBearer, Claims::getSubject));
-        }
-        return -1;
-    }
-
-    private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claimsResolver.apply(claims);
-    }
-
-    private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret.getBytes())
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
 }
