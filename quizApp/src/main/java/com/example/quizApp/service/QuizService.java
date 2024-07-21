@@ -59,9 +59,7 @@ public class QuizService {
 
     public List<String> getAllDifficultyLevels() {
         return questionRepo.findAllDifficultyLevels();
-        /*List<String> difficultyLevels = questionRepo.findAllDifficultyLevels();
-        System.out.println("Difficulty Levels: " + difficultyLevels);
-        return difficultyLevels;*/
+
     }
 
     public SavedQuiz saveQuiz(SavedQuiz savedQuiz, int resultId, int userId) {
@@ -76,8 +74,9 @@ public class QuizService {
         }
     }
 
+
     public List<SavedQuiz> getAllSaved(int userId) {
-        return quizSaveRepo.findByUserId(userId);
+               return quizSaveRepo.findByUserId(userId);
     }
 
     public List<QuestionWrapper> getSavedQuestions(String quizQuestions) {

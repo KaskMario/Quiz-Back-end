@@ -63,7 +63,7 @@ public class StatsService {
                 maxValue = entry.getValue();
                 maxCategory = new StringBuilder(entry.getKey());
             }else if(entry.getValue()== maxValue && maxValue != 0){
-                maxCategory.append(", ").append(entry.getValue());
+                maxCategory.append(", ").append(entry.getKey());
             }
             }
         if (maxCategory == null) {
@@ -174,9 +174,7 @@ try{
 
 }
 
-/*public String getDate(int userId){
-        String date = statsRepo.get
-}*/
+
 
 
 

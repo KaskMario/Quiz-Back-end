@@ -68,6 +68,7 @@ public class QuizController {
 
     @PostMapping("/save")
     public ResponseEntity <SavedQuiz> saveQuiz(@RequestParam int quizResultId, @RequestParam int userId, @RequestBody SavedQuiz savedQuiz){
+        System.out.println(savedQuiz.toString());
         SavedQuiz newSavedQuiz = quizService.saveQuiz(savedQuiz, quizResultId, userId);
 
         return new ResponseEntity<>(newSavedQuiz, HttpStatus.OK);
