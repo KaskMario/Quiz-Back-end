@@ -20,8 +20,8 @@ public interface StatsRepo extends JpaRepository<QuizResult, Integer> {
     @Query(value = "SELECT DISTINCT q.category FROM `quiz-results` q WHERE q.user_id = :userId;", nativeQuery = true)
     List<String> getUsersCategories(@Param("userId") int userId);
 
-    @Query(value = "SELECT COUNT(*) FROM `quiz-results` q WHERE q.difficulty = :difficulty AND q.user_id = :userId", nativeQuery = true)
-    int countByDifficulty(@Param("difficulty") String difficulty, @Param("userId") int userId);
+    /*@Query(value = "SELECT COUNT(*) FROM `quiz-results` q WHERE q.difficulty = :difficulty AND q.user_id = :userId", nativeQuery = true)
+    int countByDifficulty(@Param("difficulty") String difficulty, @Param("userId") int userId);*/
 
 
     @Query(value = "SELECT q.category, COUNT(*) AS category_count FROM `quiz-results` q WHERE q.user_id = :userId GROUP BY q.category", nativeQuery = true)
@@ -41,14 +41,12 @@ public interface StatsRepo extends JpaRepository<QuizResult, Integer> {
     Integer sumUpRightAnswers(@Param("difficulty") String difficulty, @Param("userId")int userId);
 
 
-    @Query(value = "SELECT DATE_FORMAT(MAX(q.created_at), '%d-%m-%Y %H:%i') FROM `quiz-results` q WHERE q.user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT MAX(q.created_at) FROM `quiz-results` q WHERE q.user_id = :userId", nativeQuery = true)
     String findMostRecentDate(@Param("userId")int userId);
 
     @Query(value = "SELECT COUNT(*) FROM `quiz-results` q WHERE q.is_flawless = :isFlawless AND q.user_id = :userId", nativeQuery = true)
     Integer sumUpFlawless(@Param("isFlawless") boolean isFlawless, @Param("userId")int userId);
 
-    @Query(value = "SELECT DISTINCT q.difficulty FROM `quiz-results` q WHERE q.user_id = :userId;", nativeQuery = true)
-    List<String> getUsersDifficulties(@Param("userId") int userId);
 
     @Query(value = "SELECT SUM(q.length) FROM `quiz-results` q WHERE q.user_id = :userId AND q.category = :category", nativeQuery = true)
     Integer sumUpQuestionsByCategory(@Param("category") String category, @Param("userId")int userId);
@@ -59,8 +57,7 @@ public interface StatsRepo extends JpaRepository<QuizResult, Integer> {
     @Query(value = "SELECT COUNT(*) FROM `quiz-results` q WHERE q.category = :category AND q.user_id = :userId", nativeQuery = true)
     int countByCategoryAndUserId(@Param("category") String category, @Param("userId") int userId);
 
-    @Query(value = "SELECT DATE_FORMAT q.created_at, '%d-%m-%Y %H:%i') FROM `quiz-results` q WHERE q.user_id = :userId", nativeQuery = true)
-    String findMostRecenDate(@Param("userId")int userId);
+
 
 
 

@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import java.time.Instant;
 
-import java.util.Date;
 
 
 @Data
@@ -30,7 +30,7 @@ public class QuizResult {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
-    private Date createdAt;
+    private Instant createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
